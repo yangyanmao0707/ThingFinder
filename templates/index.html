@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ThingFinder - 多物件辨識</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: white;
+      padding: 30px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    form {
+      margin: 15px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      width: 360px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input[type="file"] {
+      margin: 10px 0;
+      width: 100%;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 30px;
+      max-width: 99vw;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .result img {
+      max-width: 99vw;
+      max-height: 800px;
+      width: auto;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.25);
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+    video {
+      max-width: 99vw;
+      max-height: 800px;
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.25);
+      margin-top: 30px;
+    }
+    .detected-labels {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #222;
+      max-width: 99vw;
+      word-wrap: break-word;
+      text-align: center;
+      display: inline-block;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+    }
+    li {
+      padding: 8px 15px;
+      background-color: #e3f2fd;
+      margin: 6px 0;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+    .error {
+      margin-top: 20px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 ThingFinder - 多物件辨識</h1>
+
+  <form method="POST" enctype="multipart/form-data">
+    <label><strong>上傳圖片或影片</strong></label><br />
+    <input type="file" name="file" accept="image/*,video/*" required />
+    <button type="submit">開始辨識</button>
+  </form>
+
+  {% if error %}
+    <div class="error">{{ error }}</div>
+  {% endif %}
+
+  {% if result_image %}
+    <div class="result">
+      <h2>✅ 辨識結果圖片：</h2>
+      <img src="{{ url_for('static', filename='uploads/' ~ result_image) }}" alt="辨識結果圖片" />
+      <div class="detected-labels">
+        <h3>📋 辨識到的物件：</h3>
+        <ul>
+          {% for label in labels %}
+            <li>{{ label }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if result_video %}
+    <div class="result">
+      <h2>✅ 辨識結果影片：</h2>
+      <video controls autoplay muted playsinline>
+        <source src="{{ url_for('static', filename='uploads/' ~ result_video) }}" type="video/mp4" />
+        您的瀏覽器不支援影片播放。
+      </video>
+      <div class="detected-labels">
+        <h3>📋 辨識摘要：</h3>
+        <ul>
+          {% for label in labels %}
+            <li>{{ label }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+</body>
+</html>
